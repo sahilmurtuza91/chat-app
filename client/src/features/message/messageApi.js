@@ -4,7 +4,8 @@ export const messageApi = createApi({
     reducerPath: "messageApi",
 
     baseQuery: fetchBaseQuery({
-        baseUrl: "http://localhost:8000/api/message",
+        // baseUrl: "http://localhost:8000/api/message",
+        baseUrl: `${import.meta.env.VITE_API_URL}/api/message`,
         credentials: "include",
     }),
 

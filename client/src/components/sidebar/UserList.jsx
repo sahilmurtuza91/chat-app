@@ -3,26 +3,27 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import UserListItem from "./UserListItem";
+import OnlineUsersSidebar from "../location/OnlineUsersList";
 
 import { setSelectedConversation } from "../../redux/conversationSlice";
 import { useCreateConversationMutation } from "../../features/conversation/conversationApi";
 
-function UserList({
-    activeTab,
-    data,
-    currentTab,
-    setOpenSideBar,
-}) {
-
+function UserList({ activeTab, data, currentTab, setOpenSideBar }) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    // Selected conversation from Redux
     const selectedConversation = useSelector(
-        (state) => state.conversation.selectedConversation
+        (state) => state.conversation.selectedConversation,
     );
 
-    const [createConversation] =
-        useCreateConversationMutation();
+    // All live locations from Redux
+    const liveLocations = useSelector((state) => state.socket.liveLocations);
+
+    // Convert object into array
+    const onlineUsers = Object.values(liveLocations);
+
+    const [createConversation] = useCreateConversationMutation();
 
     return (
         <Box
@@ -33,24 +34,23 @@ function UserList({
             }}
         >
             <List sx={{ p: 0 }}>
-
                 {activeTab === "chats" &&
                     data?.data?.map((chatUser) => (
-
                         <UserListItem
                             key={chatUser._id}
                             chatUser={chatUser}
                             selectedConversation={selectedConversation}
                             onClick={async () => {
-
                                 try {
-                                    const response = await createConversation(chatUser._id).unwrap();
+                                    const response = await createConversation(
+                                        chatUser._id,
+                                    ).unwrap();
 
                                     dispatch(
                                         setSelectedConversation({
                                             user: chatUser,
                                             conversation: response.data,
-                                        })
+                                        }),
                                     );
                                     if (setOpenSideBar) {
                                         setOpenSideBar(false);
@@ -62,9 +62,19 @@ function UserList({
                         />
                     ))}
 
-                {activeTab !== "chats" &&
-                    currentTab?.menus?.map((menu) => (
+                {/* online users */}
+                {activeTab === "location" && (
+                    <OnlineUsersSidebar
+                        users={onlineUsers}
+                        setOpenSideBar={setOpenSideBar}
+                    />
+                )}
 
+                {/* Other sidebar menue */}
+                {
+                    activeTab !== "chats" &&
+                    activeTab !== "location" &&
+                    currentTab?.menus?.map((menu) => (
                         <ListItemButton
                             key={menu.route}
                             onClick={() => {
@@ -92,7 +102,6 @@ function UserList({
                             />
                         </ListItemButton>
                     ))}
-
             </List>
         </Box>
     );

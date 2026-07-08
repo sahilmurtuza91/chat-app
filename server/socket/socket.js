@@ -7,7 +7,10 @@ const onlineUsers = {};
 const initSocket = (server) => {
     io = new Server(server, {
         cors: {
-            origin: process.env.FORMTEND_URL, 
+            origin: [
+                process.env.FORMTEND_URL,
+                "http://localhost:5173",
+            ], 
             credentials: true,
         },
         pingTimeout: 20000,  
@@ -20,18 +23,35 @@ const initSocket = (server) => {
         console.log("==============================");
 
         // ---- USER SETUP ----
-        socket.on("setup", (userId) => {
-            if (!userId) return;
+        socket.on("setup", (user) => {
+            if(!user?.userId) return;
 
-            console.log("SETUP:", userId, socket.id);
-            socket.userId = userId;
+            // console.log("SETUP:", userId, socket.id);
+            socket.userId = user.userId; // save userId inside socket
 
-            onlineUsers[userId] = socket.id;
+            // save complete inpormation in memory
+            // onlineUsers[userId] = socket.id;
+            onlineUsers[user.userId]= {
+                userId: user.userId, 
+                socketId: socket.id,
+                name:user.name,
+                email:user.email,
+                profile_pic:user.profile_pic,
+                latitude: null,
+                longitude: null,
+            }
 
-            socket.join(userId);
-
+            // socket.join(userId); // personal room
+            socket.join(user.userId);
+            console.log("ONLINE USERS MEMORY");
+            console.log(onlineUsers);
+            // send online users
             io.emit("online-users", Object.keys(onlineUsers));
 
+            // send all availabe live locations to newly connected user
+            socket.emit("all-live-location", onlineUsers);
+
+            // Notify client that socket setup completed successfully.
             socket.emit("connected");
         });
 
@@ -55,6 +75,35 @@ const initSocket = (server) => {
             socket.to(conversationId).emit("stop-typing");
         });
 
+        // Receive the users live location from the server
+        socket.on("send-location", (data)=>{
+            const { userId, latitude, longitude } = data;
+
+            // if user is not online
+            if(!onlineUsers[userId]) return;
+
+            // memory update
+            onlineUsers[userId].latitude = latitude;
+            onlineUsers[userId].longitude = longitude;
+
+            console.log("Live location updated")
+            console.log(onlineUsers[userId]);
+
+
+            // send updated location to all connected clients
+            io.emit("receive-location",{
+                userId,
+                name:onlineUsers[userId].name,
+                profile_pic:onlineUsers[userId].profile_pic,
+                latitude,
+                longitude,
+            });
+
+            // Send complete live location list to all connected users.
+            // This keeps every client synchronized.
+            io.emit("all-live-location", onlineUsers);
+        });
+
         // DISCONNECT 
         socket.on("disconnect", async (reason) => {
             console.log("==============================");
@@ -65,9 +114,11 @@ const initSocket = (server) => {
                 const userId = socket.userId;
                 if (!userId) return;
 
-                if (onlineUsers[userId] !== socket.id) return;
+                // if (onlineUsers[userId] !== socket.id) return;
+                if(onlineUsers[userId]?.socketId !== socket.id) return;
 
                 delete onlineUsers[userId];
+
 
                 const User = require("../models/userModel");
                 const lastSeenTime = new Date();
@@ -76,6 +127,8 @@ const initSocket = (server) => {
 
                 io.emit("last-seen-update", { userId, lastSeen: lastSeenTime });
                 io.emit("online-users", Object.keys(onlineUsers));
+
+                io.emit("all-live-location", onlineUsers)
             } catch (err) {
                 console.log("Disconnect error:", err);
             }

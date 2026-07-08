@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 
 import App from "./App"
 import "./index.css";
+import "leaflet/dist/leaflet.css";
 
 import { store } from "./app/store";
 

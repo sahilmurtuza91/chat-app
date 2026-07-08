@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import ChatContainer from "../components/chat/ChatContainer";
 
 function Home() {

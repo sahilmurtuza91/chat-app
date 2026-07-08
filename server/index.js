@@ -31,7 +31,10 @@ connectDB();
 
 // middlewares
 app.use(cors({
-    origin: process.env.FORMTEND_URL, 
+    origin: [
+        process.env.FORMTEND_URL,
+        "http://localhost:5173",
+    ],
     credentials: true,
 }));
 

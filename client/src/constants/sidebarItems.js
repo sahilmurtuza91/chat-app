@@ -1,6 +1,7 @@
 import SettingsIcon from "@mui/icons-material/Settings";
 import { MdOutlineWifiCalling3 } from "react-icons/md";
 import { IoIosChatbubbles } from "react-icons/io";
+import { IoLocationSharp } from "react-icons/io5";
 
 const sideBarItems = [
     {
@@ -20,6 +21,12 @@ const sideBarItems = [
         menus: [],
     },
     {
+        id: "location",
+        icon: IoLocationSharp,
+        route: "/location",
+        menus: [],
+    },
+    {
         id: "settings",
         icon: SettingsIcon,
         menus: [
@@ -34,5 +41,6 @@ const sideBarItems = [
         ],
     },
 ];
+
 
 export default sideBarItems;

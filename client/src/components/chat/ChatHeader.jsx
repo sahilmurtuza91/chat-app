@@ -18,6 +18,7 @@ function ChatHeader() {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
     const { setOpenSideBar } = useOutletContext();
+
     const [typing, setTyping] = useState(false);
     const [openProfile, setOpenProfile] = useState(false);
 
@@ -70,96 +71,223 @@ function ChatHeader() {
 
     if (!selectedUser) return null;
     return (
-        <Box
-            sx={{
-                height: 70,
-                backgroundColor: "#f0f2f5",
-                px: 2,
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-            }}
-        >
-            <Stack
-                direction="row"
-                spacing={1.5}
-                alignItems="center"
+        // <Box
+        //     sx={{
+        //         height: 70,
+        //         backgroundColor: "#f0f2f5",
+        //         px: 2,
+        //         display: "flex",
+        //         justifyContent: "space-between",
+        //         alignItems: "center",
+        //     }}
+        // >
+        //     <Stack
+        //         direction="row"
+        //         spacing={1.5}
+        //         alignItems="center"
+        //     >
+        //         {isMobile && (
+        //             <IconButton onClick={() => setOpenSideBar(true)}>
+        //                 <MenuIcon />
+        //             </IconButton>
+        //         )}
+
+        //         <UserAvatar
+        //             name={selectedUser.name}
+        //             profile_pic={selectedUser.profile_pic}
+        //             size={45}
+        //         />
+
+        //         <Box>
+        //             <Typography fontWeight="600">
+        //                 {selectedUser.name}
+        //             </Typography>
+
+        //             <Typography
+        //                 variant="body2"
+        //                 sx={{
+        //                     color: typing
+        //                         ? "#1976d2"
+        //                         : isOnline
+        //                             ? "green"
+        //                             : "#757575",
+        //                 }}
+        //             >
+        //                 {typing
+        //                     ? "Typing..."
+        //                     : isOnline
+        //                         ? "Online"
+        //                         : formatLastSeen(userLastSeen)}
+        //             </Typography>
+        //         </Box>
+        //     </Stack>
+        //     <Stack
+        //         direction="row"
+        //         spacing={1}
+        //     >
+
+        //         <IconButton>
+
+        //             <HiOutlinePhone
+        //                 size={20}
+        //             />
+
+        //         </IconButton>
+
+        //         <IconButton>
+
+        //             <HiOutlineVideoCamera
+        //                 size={22}
+        //             />
+
+        //         </IconButton>
+
+        //         <IconButton
+        //             onClick={handleMenueOpen}
+        //         >
+        //             <BsThreeDotsVertical
+        //                 size={18}
+        //             />
+        //         </IconButton>
+        //     </Stack>
+
+        //     <ChatMenue
+        //         anchorEl={anchorEl}
+        //         handleMenueClose={handleMenueClose}
+        //         openProfile={() => setOpenProfile(true)}
+        //     />
+        //     <UserProfileDialog
+        //         open={openProfile}
+        //         handleClose={() => setOpenProfile(false)}
+        //     />
+        // </Box>
+
+        <>
+            <Box
+                sx={{
+                    height: { xs: 60, sm: 70 },
+                    backgroundColor: "#f0f2f5",
+                    px: { xs: 1, sm: 2 },
+                    display: "flex",
+                    alignItems: "center",
+                }}
             >
-                {isMobile && (
-                    <IconButton onClick={() => setOpenSideBar(true)}>
-                        <MenuIcon />
-                    </IconButton>
-                )}
+                {/* Left Section */}
+                <Stack
+                    direction="row"
+                    spacing={1.5}
+                    alignItems="center"
+                    sx={{
+                        flex: 1,
+                        minWidth: 0,
+                    }}
+                >
+                    {isMobile && (
+                        <IconButton
+                            onClick={() => setOpenSideBar(true)}
+                            sx={{ p: { xs: 0.75, sm: 1 } }}
+                        >
+                            <MenuIcon />
+                        </IconButton>
+                    )}
 
-                <UserAvatar
-                    name={selectedUser.name}
-                    profile_pic={selectedUser.profile_pic}
-                    size={45}
-                />
+                    <UserAvatar
+                        name={selectedUser.name}
+                        profile_pic={selectedUser.profile_pic}
+                        size={isMobile ? 40 : 45}
+                    />
 
-                <Box>
-                    <Typography fontWeight="600">
-                        {selectedUser.name}
-                    </Typography>
-
-                    <Typography
-                        variant="body2"
+                    <Box
                         sx={{
-                            color: typing
-                                ? "#1976d2"
-                                : isOnline
-                                    ? "green"
-                                    : "#757575",
+                            minWidth: 0,
+                            overflow: "hidden",
                         }}
                     >
-                        {typing
-                            ? "Typing..."
-                            : isOnline
-                                ? "Online"
-                                : formatLastSeen(userLastSeen)}
-                    </Typography>
-                </Box>
-            </Stack>
-            <Stack
-                direction="row"
-                spacing={1}
-            >
+                        <Typography
+                            fontWeight={600}
+                            noWrap
+                            sx={{
+                                fontSize: {
+                                    xs: "0.95rem",
+                                    sm: "1rem",
+                                },
+                            }}
+                        >
+                            {selectedUser.name}
+                        </Typography>
 
-                <IconButton>
+                        <Typography
+                            variant="body2"
+                            noWrap
+                            sx={{
+                                color: typing
+                                    ? "#1976d2"
+                                    : isOnline
+                                        ? "green"
+                                        : "#757575",
+                                fontSize: {
+                                    xs: "0.75rem",
+                                    sm: "0.875rem",
+                                },
+                            }}
+                        >
+                            {typing
+                                ? "Typing..."
+                                : isOnline
+                                    ? "Online"
+                                    : formatLastSeen(userLastSeen)}
+                        </Typography>
+                    </Box>
+                </Stack>
 
-                    <HiOutlinePhone
-                        size={20}
-                    />
-
-                </IconButton>
-
-                <IconButton>
-
-                    <HiOutlineVideoCamera
-                        size={22}
-                    />
-
-                </IconButton>
-
-                <IconButton
-                    onClick={handleMenueOpen}
+                {/* Right Section */}
+                <Stack
+                    direction="row"
+                    spacing={{ xs: 0.3, sm: 1 }}
+                    alignItems="center"
+                    sx={{
+                        flexShrink: 0,
+                        ml: 1,
+                    }}
                 >
-                    <BsThreeDotsVertical
-                        size={18}
-                    />
-                </IconButton>
-            </Stack>
+                    <IconButton
+                        sx={{
+                            p: { xs: 0.75, sm: 1 },
+                        }}
+                    >
+                        <HiOutlinePhone size={20} />
+                    </IconButton>
+
+                    <IconButton
+                        sx={{
+                            p: { xs: 0.75, sm: 1 },
+                        }}
+                    >
+                        <HiOutlineVideoCamera size={22} />
+                    </IconButton>
+
+                    <IconButton
+                        onClick={handleMenueOpen}
+                        sx={{
+                            p: { xs: 0.75, sm: 1 },
+                        }}
+                    >
+                        <BsThreeDotsVertical size={18} />
+                    </IconButton>
+                </Stack>
+            </Box>
 
             <ChatMenue
                 anchorEl={anchorEl}
                 handleMenueClose={handleMenueClose}
                 openProfile={() => setOpenProfile(true)}
             />
+
             <UserProfileDialog
                 open={openProfile}
                 handleClose={() => setOpenProfile(false)}
             />
-        </Box>
+        </>
     )
 }
 

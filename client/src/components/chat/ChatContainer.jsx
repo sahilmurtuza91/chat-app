@@ -7,10 +7,12 @@ import MessageInput from "./MessageInput";
 import EmptyChat from "./EmptyChat";
 
 function ChatContainer() {
-    const selectedConversation = useSelector((state) => state.conversation.selectedConversation);
+    const selectedConversation = useSelector(
+        (state) => state.conversation.selectedConversation,
+    );
 
     if (!selectedConversation) {
-        return <EmptyChat />
+        return <EmptyChat />;
     }
 
     return (
@@ -19,14 +21,25 @@ function ChatContainer() {
                 display: "flex",
                 flexDirection: "column",
                 height: "100%",
+                minHeight: 0,
+                overflow: "hidden",
                 backgroundColor: "#efeae2",
             }}
         >
             <ChatHeader />
-            <MessageList />
+            <Box
+                sx={{
+                    flex: 1,
+                    minHeight: 0,
+                    overflow: "hidden",
+                }}
+            >
+                <MessageList />
+            </Box>
+
             <MessageInput />
         </Box>
-    )
+    );
 }
 
-export default ChatContainer
+export default ChatContainer;

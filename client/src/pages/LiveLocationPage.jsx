@@ -1,4 +1,6 @@
-import { Box } from "@mui/material";
+import { Box, IconButton, useMediaQuery, useTheme } from "@mui/material";
+import { useOutletContext } from "react-router";
+import MenuIcon from "@mui/icons-material/Menu";
 import { MapContainer, TileLayer, Marker, Popup, Tooltip } from "react-leaflet"
 import { useSelector } from "react-redux";
 import UserLocationMarker from "../components/location/UserLocationMarker";
@@ -6,6 +8,10 @@ import AutoFitBounds from "../components/map/AutoFitBounds";
 import MapAutoCenter from "../components/location/MapAutoCenter";
 
 function LiveLocationPage() {
+
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+    const { setOpenSideBar } = useOutletContext();
 
     // all user live location from the redux
     const liveLocation = useSelector((state) => state.socket.liveLocations);
@@ -88,6 +94,7 @@ function LiveLocationPage() {
                 width: "100%",
                 height: "100%",
                 display: "flex",
+                position: "relative",
             }}
         >
             {/* Right Map */}
@@ -96,6 +103,24 @@ function LiveLocationPage() {
                     flex: 1,
                 }}
             >
+                {isMobile && (
+                    <IconButton
+                        onClick={() => setOpenSideBar(true)}
+                        sx={{
+                            position: "absolute",
+                            top: 16,
+                            right: 16,
+                            zIndex: 1000,
+                            backgroundColor: "#fff",
+                            boxShadow: 2,
+                            "&:hover": {
+                                backgroundColor: "#f5f5f5",
+                            },
+                        }}
+                    >
+                        <MenuIcon />
+                    </IconButton>
+                )}
                 <MapContainer
                     center={[30.7126, 76.7089]}
                     zoom={16}

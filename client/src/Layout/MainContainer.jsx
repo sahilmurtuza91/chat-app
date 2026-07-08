@@ -93,8 +93,9 @@ function MainContainer() {
           component="main"
           sx={{
             flexGrow: 1,
-            overflowY: "auto",
+            height: "100%",
             width: "100%",
+            overflow: "hidden",
             backgroundColor: "#f1f5f9",
           }}
         >

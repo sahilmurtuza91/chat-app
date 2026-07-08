@@ -29,7 +29,7 @@ export default function MessageList() {
     useEffect(() => {
         if (!conversation) return;
         const handleReceiveMessage = (message) => {
-console.log("SOCKET RECEIVE", message);
+            console.log("SOCKET RECEIVE", message);
             if (message.conversationId !== conversation._id) {
                 return;
             }
@@ -104,8 +104,9 @@ console.log("SOCKET RECEIVE", message);
     return (
         <Box
             sx={{
-                flex: 1,
+                height: "100%",
                 overflowY: "auto",
+                overflowX: "hidden",
                 p: 2,
                 display: "flex",
                 flexDirection: "column",
